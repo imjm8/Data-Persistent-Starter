@@ -1,0 +1,322 @@
+// Mariia Koshina
+// 8 months ago
+// (edited)
+// It works perfectly!
+
+// https://play.unity.com/mg/other/data-persistence-in-a-new-repo
+// https://github.com/koshinamari/Data-Persistence-Project.git
+
+
+// 1. Create a new Scene and call it "Start Menu". Create there - 
+
+//  - Text Object for Best Score
+//  - Text Input Field
+//  - Start Button
+//  - Quit Button
+
+// In Inspector (in the text of Placeholder of the InputField) tape "Tape your name..."
+
+// 2. Then, create a new Empty Object in the Start Menu Scene and call it Player Data Handle. Now, we need to create a new script to be the static class where we’ll store the data you want to persist between scenes. So, create a new script and call it PlayerDataHandle (and attach it):
+
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+
+// public class PlayerDataHandle : MonoBehaviour
+// {
+//     //Static Class for save the current player data;
+//     //Singleton pattern
+
+//     public static PlayerDataHandle Instance;
+
+//     public string PlayerName;
+
+//     public int Score;
+
+//     private void Awake()
+//     {
+//         //we dont actually need this if statement because when we are in the Main Scene we cant return to the Start Menu Scene where the Player Data Handle Object already exists.
+//         if (Instance != null)
+//         {
+//             Destroy(gameObject);
+//         }
+//         Instance = this;
+//         DontDestroyOnLoad(gameObject);
+//     }
+// }
+
+
+// 3. Create MenuUIHandler.cs script and attach it to the Canvas in the Start Menu Scene:
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using UnityEngine.SceneManagement;
+// using UnityEngine.UI;
+// using UnityEditor;
+// public class MenuUIHandler : MonoBehaviour
+// {
+//     //This is the handler of the main menu scene
+
+//     [SerializeField] Text PlayerNameInput;
+
+//     public void StartGame()
+//     {
+//         SceneManager.LoadScene(1);
+//     }
+
+//     public void SetPlayerName()
+//     {
+//         PlayerDataHandle.Instance.PlayerName = PlayerNameInput.text;
+//     }
+
+//     public void ExitGame()
+//     {
+// #if UNITY_EDITOR
+//         EditorApplication.ExitPlaymode();
+// #else
+//         Application.Quit();
+// #endif
+//     }
+// }
+
+
+
+// 4.
+// 4.1 - Select Canvas in Inspector. In the window for Player Name Input assign the Text component of the InputField.
+// 4.2 - Select InputField in Inspector. On End Edit(String) - Assign the current Canvas  and choose the function - MenuUIHandler - SetPlayerName().
+// 4.3 - Select Start Button in Inspector. On Click() - Assign the current canvas  and choose the function - MenuUIHandler - StartGame().
+// 4.4 - Select Quit Button in Inspector. On Click() - Assign the current canvas  and choose the function - MenuUIHandler - ExitGame().
+
+
+
+
+
+// 5. Create a new Empty Object in the Start Menu Scene and call it LoadGameRank. Create a new script and call it LoadGameRank (and attach it):
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using UnityEngine.SceneManagement;
+// using UnityEngine.UI;
+// using System.IO;
+
+// public class LoadGameRankScript : MonoBehaviour
+// {
+
+//     //Fields for display the player info
+
+//     public Text BestPlayerName;
+
+
+//     //Static variables for holding the best player data
+//     private static int BestScore;
+//     private static string BestPlayer;
+
+
+//     private void Awake()
+//     {
+//         LoadGameRank();
+//     }
+
+
+
+//     private void SetBestPlayer()
+//     {
+//         if (BestPlayer == null && BestScore == 0)
+//         {
+//             BestPlayerName.text = "";
+//         }
+//         else
+//         {
+//             BestPlayerName.text = $"Best Score - {BestPlayer}: {BestScore}";
+//         }
+
+//     }
+
+//     public void LoadGameRank()
+//     {
+//         string path = Application.persistentDataPath + "/savefile.json";
+
+//         if (File.Exists(path))
+//         {
+//             string json = File.ReadAllText(path);
+//             SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+//             BestPlayer = data.TheBestPlayer;
+//             BestScore = data.HighiestScore;
+//             SetBestPlayer();
+//         }
+//     }
+
+//     [System.Serializable]
+//     class SaveData
+//     {
+//         public int HighiestScore;
+//         public string TheBestPlayer;
+//     }
+// }
+
+// 6. Change the MainManager script this way:
+
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
+// using UnityEngine.SceneManagement;
+// using UnityEngine.UI;
+// using System.IO;
+
+// public class MainManager : MonoBehaviour
+// {
+//     public Brick BrickPrefab;
+//     public int LineCount = 6;
+//     public Rigidbody Ball;
+
+//     public Text ScoreText;
+
+//     //Fields for display the player info
+//     public Text CurrentPlayerName;
+//     public Text BestPlayerNameAndScore;
+
+//     public GameObject GameOverText;
+
+//     private bool m_Started = false;
+//     private int m_Points;
+
+//     private bool m_GameOver = false;
+
+//     //Static variables for holding the best player data
+//     private static int BestScore;
+//     private static string BestPlayer;
+
+
+//     private void Awake()
+//     {
+//         LoadGameRank();
+//     }
+//     // Start is called before the first frame update
+//     void Start()
+//     {
+//         const float step = 0.6f;
+//         int perLine = Mathf.FloorToInt(4.0f / step);
+
+//         int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
+//         for (int i = 0; i < LineCount; ++i)
+//         {
+//             for (int x = 0; x < perLine; ++x)
+//             {
+//                 Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
+//                 var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
+//                 brick.PointValue = pointCountArray[i];
+//                 brick.onDestroyed.AddListener(AddPoint);
+//             }
+//         }
+
+//         CurrentPlayerName.text = PlayerDataHandle.Instance.PlayerName;
+
+//         SetBestPlayer();
+//     }
+
+//     private void Update()
+//     {
+//         if (!m_Started)
+//         {
+//             if (Input.GetKeyDown(KeyCode.Space))
+//             {
+//                 m_Started = true;
+//                 float randomDirection = Random.Range(-1.0f, 1.0f);
+//                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
+//                 forceDir.Normalize();
+
+//                 Ball.transform.SetParent(null);
+//                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+//             }
+//         }
+//         else if (m_GameOver)
+//         {
+//             if (Input.GetKeyDown(KeyCode.Space))
+//             {
+//                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+//             }
+//         }
+//     }
+
+//     void AddPoint(int point)
+//     {
+//         m_Points += point;
+//         PlayerDataHandle.Instance.Score = m_Points;
+//         ScoreText.text = $"Score : {m_Points}";
+//     }
+
+//     public void GameOver()
+//     {
+//         m_GameOver = true;
+//         CheckBestPlayer();
+//         GameOverText.SetActive(true);
+//     }
+
+//     private void CheckBestPlayer()
+//     {
+//         int CurrentScore = PlayerDataHandle.Instance.Score;
+
+//         if (CurrentScore > BestScore)
+//         {
+//             BestPlayer = PlayerDataHandle.Instance.PlayerName;
+//             BestScore = CurrentScore;
+
+//             BestPlayerNameAndScore.text = $"Best Score - {BestPlayer}: {BestScore}";
+
+//             SaveGameRank(BestPlayer, BestScore);
+//         }
+//     }
+
+//     private void SetBestPlayer()
+//     {
+//         if (BestPlayer == null && BestScore == 0)
+//         {
+//             BestPlayerNameAndScore.text = "";
+//         }
+//         else
+//         {
+//             BestPlayerNameAndScore.text = $"Best Score - {BestPlayer}: {BestScore}";
+//         }
+
+//     }
+
+//     public void SaveGameRank(string bestPlaterName, int bestPlayerScore)
+//     {
+//         SaveData data = new SaveData();
+
+//         data.TheBestPlayer = bestPlaterName;
+//         data.HighiestScore = bestPlayerScore;
+
+//         string json = JsonUtility.ToJson(data);
+//         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+//     }
+
+//     public void LoadGameRank()
+//     {
+//         string path = Application.persistentDataPath + "/savefile.json";
+
+//         if (File.Exists(path))
+//         {
+//             string json = File.ReadAllText(path);
+//             SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+//             BestPlayer = data.TheBestPlayer;
+//             BestScore = data.HighiestScore;
+//         }
+//     }
+
+//     [System.Serializable]
+//     class SaveData
+//     {
+//         public int HighiestScore;
+//         public string TheBestPlayer;
+//     }
+// }
+
+// 7. 
+// 7.1. Create a new Text Object in the Main Scene and call it CurrentName.
+// 7.2. Select Main Manager in Inspector and check that you have assigned text objexts for Score Text, Current Player Name and Best Player Name and Score.
