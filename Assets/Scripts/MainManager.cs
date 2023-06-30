@@ -91,6 +91,7 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                m_Started = false;
             }
         }
     }
@@ -110,22 +111,43 @@ public class MainManager : MonoBehaviour
     [System.Serializable]
     class SaveData
     {
-        public string HighiestScore;
+        public int HighiestScore;
         public string TheBestPlayer;
     }
 
     public void SaveBestScore()
     {
-        SaveData data = new SaveData();
-        data.HighiestScore = ScoreText.text;
+        SaveData data = LoadData();
 
-        string json = JsonUtility.ToJson(data);
+        if (m_Points > data.HighiestScore)
+        {
+            data.HighiestScore = m_Points;
+            data.TheBestPlayer = currentPlayerName;
 
-        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
-        Debug.Log(Application.persistentDataPath);
+            string json = JsonUtility.ToJson(data);
+
+            File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+            Debug.Log(Application.persistentDataPath);
+        }
+        else if (m_Points <= data.HighiestScore)
+        {
+            return;
+        }
     }
 
-    public void LoadBestScoreAndName()
+    public string DataRawName()
+    {
+        SaveData data = LoadData();
+        return data.TheBestPlayer;
+    }
+
+    public int DataRawScore()
+    {
+        SaveData data = LoadData();
+        return data.HighiestScore;
+    }
+
+    private SaveData LoadData()
     {
         string path = Application.persistentDataPath + "/savefile.json";
 
@@ -134,7 +156,11 @@ public class MainManager : MonoBehaviour
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            ScoreText.text = data.HighiestScore;
+            ScoreText.text = $"{data.TheBestPlayer} has the Best Score: {data.HighiestScore}";
+
+            return data;
         }
+
+        return new SaveData();
     }
 }

@@ -13,10 +13,13 @@ public class UIMainScene : MonoBehaviour
     [SerializeField] GameObject gameoverObject;
     [SerializeField] Rigidbody Ball;
 
-    void Start()
+    void Awake()
     {
         if (MainManager.Instance != null)
         {
+            // SetPlayerText(HasBestScoreName != null
+            //                 ? HasBestScoreName + " has best score: " + HasBestScore
+            //                 : MainManager.Instance.currentPlayerName);
             SetPlayerText(MainManager.Instance.currentPlayerName);
             SetScoreText(scoreText);
             SetBallRigidbody();
@@ -30,6 +33,12 @@ public class UIMainScene : MonoBehaviour
 
     void SetPlayerText(string text) =>
         playerName.text = text;
+
+    string HasBestScoreName =>
+        MainManager.Instance.DataRawName();
+
+    string HasBestScore =>
+        MainManager.Instance.DataRawScore().ToString();
 
     void SetScoreText(TextMeshProUGUI scoreText) =>
         MainManager.Instance.ScoreText = scoreText;

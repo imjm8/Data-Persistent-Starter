@@ -8,6 +8,7 @@ public class DeathZone : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         Destroy(other.gameObject);
+        MainManager.Instance.SaveBestScore();
         MainManager.Instance.GameOver();
     }
 }

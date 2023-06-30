@@ -15,31 +15,20 @@ using UnityEditor;
 public class MenuUIHandler : MonoBehaviour
 {
     [SerializeField] TMP_InputField playerNameInput;
-    [SerializeField] Brick BrickPrefab;
 
     void Start()
     {
 
     }
 
-    IEnumerator SetBrickPrefab() {
-        yield return new WaitForSeconds(3);
-        MainManager.Instance.BrickPrefab = BrickPrefab;
-    }
-
-    public void StartGame()
-    {
-        SceneManager.LoadScene(1);
-        StartCoroutine(SetBrickPrefab());
-    }
+    public void StartGame() => SceneManager.LoadScene(1);
+ 
 
     public void SetPlayerName()
     {
-        Debug.Log(MainManager.Instance + "And Current name is:" + MainManager.Instance.currentPlayerName);
         if (MainManager.Instance != null)
         {
             SetPlayerText();
-            Debug.Log("Debug from MenuUIHandler _" + playerNameInput.text + "_");
         }
     }
 
@@ -51,7 +40,7 @@ public class MenuUIHandler : MonoBehaviour
 
     public void Exit()
     {
-        // MainManager.Instance.SaveBestScore();
+        MainManager.Instance.SaveBestScore();
 
 #if UNITY_EDITOR
         EditorApplication.ExitPlaymode();
