@@ -14,13 +14,40 @@ using UnityEditor;
 [DefaultExecutionOrder(1000)]
 public class MenuUIHandler : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI PlayerNameInput;
+    [SerializeField] TMP_InputField playerNameInput;
+    [SerializeField] Brick BrickPrefab;
 
-    public void StartNew() => 
+    void Start()
+    {
+
+    }
+
+    IEnumerator SetBrickPrefab() {
+        yield return new WaitForSeconds(3);
+        MainManager.Instance.BrickPrefab = BrickPrefab;
+    }
+
+    public void StartGame()
+    {
         SceneManager.LoadScene(1);
+        StartCoroutine(SetBrickPrefab());
+    }
 
-    public void SetPlayerName() => 
-        PlayerDataHandle.Instance.PlayerName = PlayerNameInput.text;
+    public void SetPlayerName()
+    {
+        Debug.Log(MainManager.Instance + "And Current name is:" + MainManager.Instance.currentPlayerName);
+        if (MainManager.Instance != null)
+        {
+            SetPlayerText();
+            Debug.Log("Debug from MenuUIHandler _" + playerNameInput.text + "_");
+        }
+    }
+
+    private void SetPlayerText()
+    {
+        string text = playerNameInput.text;
+        MainManager.Instance.currentPlayerName = text;
+    }
 
     public void Exit()
     {

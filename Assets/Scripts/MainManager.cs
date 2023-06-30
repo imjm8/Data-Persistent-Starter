@@ -14,17 +14,27 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
-    public Text ScoreText;
-    public TextMeshProUGUI CurrentPlayerName;
+    public TextMeshProUGUI ScoreText;
+    public string currentPlayerName;
 
     public GameObject GameOverText;
-    
+
     private bool m_Started = false;
     private int m_Points;
-    
+
     private bool m_GameOver = false;
 
-    private void Awake() {
+    // private static MainManager _uniqueInstance;
+    // private static MainManager _createdInstance;
+    // static MainManager Constructor() => _createdInstance;
+    // public static MainManager Instance()
+    // {
+    //     _uniqueInstance ??= Constructor();
+    //     return _uniqueInstance;
+    // }
+
+    private void Awake()
+    {
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -34,16 +44,21 @@ public class MainManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        LoadBestScore();
+        // LoadBestScore();
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
+        // CurrentPlayerName = PlayerDataHandle.Instance.PlayerName;
+    }
+
+    public void SetPrefabConfig()
+    {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
+
+        int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
         for (int i = 0; i < LineCount; ++i)
         {
             for (int x = 0; x < perLine; ++x)
@@ -54,8 +69,6 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
-
-        CurrentPlayerName.text = PlayerDataHandle.Instance.PlayerName;
     }
 
     private void Update()
@@ -95,13 +108,16 @@ public class MainManager : MonoBehaviour
     }
 
     [System.Serializable]
-    class SaveData {
-        public Text BestScore;
+    class SaveData
+    {
+        public string HighiestScore;
+        public string TheBestPlayer;
     }
 
-    public void SaveBestScore() {
+    public void SaveBestScore()
+    {
         SaveData data = new SaveData();
-        data.BestScore = ScoreText;
+        data.HighiestScore = ScoreText.text;
 
         string json = JsonUtility.ToJson(data);
 
@@ -109,15 +125,16 @@ public class MainManager : MonoBehaviour
         Debug.Log(Application.persistentDataPath);
     }
 
-    public void LoadBestScore() {
+    public void LoadBestScoreAndName()
+    {
         string path = Application.persistentDataPath + "/savefile.json";
 
-        if (File.Exists(path)) 
+        if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            ScoreText = data.BestScore;
+            ScoreText.text = data.HighiestScore;
         }
     }
 }

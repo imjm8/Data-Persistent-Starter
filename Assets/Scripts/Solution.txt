@@ -16,7 +16,10 @@
 
 // In Inspector (in the text of Placeholder of the InputField) tape "Tape your name..."
 
-// 2. Then, create a new Empty Object in the Start Menu Scene and call it Player Data Handle. Now, we need to create a new script to be the static class where we’ll store the data you want to persist between scenes. So, create a new script and call it PlayerDataHandle (and attach it):
+// 2. Then, create a new Empty Object in the Start Menu Scene and call it Player Data Handle. 
+// Now, we need to create a new script to be the static class 
+// where we’ll store the data you want to persist between scenes. 
+// So, create a new script and call it PlayerDataHandle (and attach it):
 
 
 // using System.Collections;
