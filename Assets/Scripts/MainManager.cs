@@ -8,7 +8,19 @@ using TMPro;
 
 public class MainManager : MonoBehaviour
 {
-    public static MainManager Instance;
+    private static MainManager _Instance;
+    public static MainManager Instance
+    {
+        get 
+        {
+            if (_Instance == null)
+            {
+                SetupInstance();
+            }
+
+            return _Instance;
+        }
+    }
 
     [SerializeField] private Brick _BrickPrefab;
     [SerializeField] private float _force = 2.0f;
@@ -28,24 +40,28 @@ public class MainManager : MonoBehaviour
     public string currentPlayerName { get; set; }
     public GameObject GameOverText { get; set; }
 
-    // private static MainManager _uniqueInstance;
-    // private static MainManager _createdInstance;
-    // static MainManager Constructor() => _createdInstance;
-    // public static MainManager Instance()
-    // {
-    //     _uniqueInstance ??= Constructor();
-    //     return _uniqueInstance;
-    // }
+    private static void SetupInstance()
+    {
+        _Instance = FindObjectOfType<MainManager>();
+        if (_Instance == null)
+        {
+            GameObject gameObj = new GameObject();
+            gameObj.name = "MainManager";
+            
+            _Instance = gameObj.AddComponent<MainManager>();
+            DontDestroyOnLoad(gameObj);
+        }
+    }
 
     private void Awake()
     {
-        if (Instance != null)
+        if (_Instance != null)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
+        _Instance = this;
         DontDestroyOnLoad(gameObject);
 
         // LoadBestScore();
