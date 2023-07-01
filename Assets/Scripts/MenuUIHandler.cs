@@ -28,7 +28,7 @@ public class MenuUIHandler : MonoBehaviour
     {
         if (MainManager.Instance != null)
         {
-            SetPlayerText();
+            MainManager.Instance.currentPlayerName = playerNameInput.text;
         }
     }
 

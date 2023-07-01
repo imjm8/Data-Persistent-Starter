@@ -901,7 +901,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNameInput: {fileID: 314945909}
-  BrickPrefab: {fileID: 0}
 --- !u!1 &712601364
 GameObject:
   m_ObjectHideFlags: 0
@@ -1343,13 +1342,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d110623a642692246a42fbc2d8d89884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMenuScene: 1
-  BrickPrefab: {fileID: 897975713663390409, guid: 63f25b9733d2bcd4fa2ff6de1264c739, type: 3}
-  LineCount: 6
-  Ball: {fileID: 0}
-  ScoreText: {fileID: 729457939}
-  currentPlayerName: 
-  GameOverText: {fileID: 0}
+  _BrickPrefab: {fileID: 897975713663390409, guid: 63f25b9733d2bcd4fa2ff6de1264c739, type: 3}
+  _force: 2
 --- !u!4 &1131666617
 Transform:
   m_ObjectHideFlags: 0

@@ -10,19 +10,23 @@ public class MainManager : MonoBehaviour
 {
     public static MainManager Instance;
 
-    public Brick BrickPrefab;
-    public int LineCount = 6;
-    public Rigidbody Ball;
-
-    public TextMeshProUGUI ScoreText;
-    public string currentPlayerName;
-
-    public GameObject GameOverText;
-
+    [SerializeField] private Brick _BrickPrefab;
+    [SerializeField] private float _force = 2.0f;
+    private int LineCount = 6;
     private bool m_Started = false;
     private int m_Points;
-
     private bool m_GameOver = false;
+
+    private Rigidbody _Ball;
+    public Rigidbody Ball
+    {
+        private get => _Ball;
+        set => _Ball = value;
+    }
+
+    public TextMeshProUGUI ScoreText { get; set; }
+    public string currentPlayerName { get; set; }
+    public GameObject GameOverText { get; set; }
 
     // private static MainManager _uniqueInstance;
     // private static MainManager _createdInstance;
@@ -53,7 +57,8 @@ public class MainManager : MonoBehaviour
         // CurrentPlayerName = PlayerDataHandle.Instance.PlayerName;
     }
 
-    public void SetPrefabConfig()
+    public void DrawPrefabConfig() => _SetPrefabConfig();
+    private void _SetPrefabConfig()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -64,7 +69,7 @@ public class MainManager : MonoBehaviour
             for (int x = 0; x < perLine; ++x)
             {
                 Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
-                var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
+                var brick = Instantiate(_BrickPrefab, position, Quaternion.identity);
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
@@ -78,12 +83,12 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
+                float randomDirection = Random.Range(-1.5f, 1.5f);
                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
                 forceDir.Normalize();
 
-                Ball.transform.SetParent(null);
-                Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+                _Ball.transform.SetParent(null);
+                _Ball.AddForce(forceDir * _force, ForceMode.VelocityChange);
             }
         }
         else if (m_GameOver)
@@ -96,7 +101,7 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    void AddPoint(int point)
+    private void AddPoint(int point)
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
@@ -105,6 +110,7 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        m_Points = 0;
         GameOverText.SetActive(true);
     }
 
@@ -135,13 +141,13 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    public string DataRawName()
+    public string DataNameRaw()
     {
         SaveData data = LoadData();
         return data.TheBestPlayer;
     }
 
-    public int DataRawScore()
+    public int DataScoreRaw()
     {
         SaveData data = LoadData();
         return data.HighiestScore;

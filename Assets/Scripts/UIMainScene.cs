@@ -8,10 +8,10 @@ using TMPro;
 
 public class UIMainScene : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI playerName;
-    [SerializeField] TextMeshProUGUI scoreText;
-    [SerializeField] GameObject gameoverObject;
-    [SerializeField] Rigidbody Ball;
+    [SerializeField] private TextMeshProUGUI playerName;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private GameObject gameoverObject;
+    [SerializeField] private Rigidbody Ball;
 
     void Awake()
     {
@@ -24,32 +24,32 @@ public class UIMainScene : MonoBehaviour
             SetScoreText(scoreText);
             SetBallRigidbody();
             SetGameoverText();
-            SetPrefab();
+            DrawPrefab();
         }
     }
 
-    void SetPrefab() =>
-        MainManager.Instance.SetPrefabConfig();
+    private void DrawPrefab() =>
+        MainManager.Instance.DrawPrefabConfig();
 
-    void SetPlayerText(string text) =>
+    private void SetPlayerText(string text) =>
         playerName.text = text;
 
-    string HasBestScoreName =>
-        MainManager.Instance.DataRawName();
+    private string HasBestScoreName =>
+        MainManager.Instance.DataNameRaw();
 
-    string HasBestScore =>
-        MainManager.Instance.DataRawScore().ToString();
+    private string HasBestScore =>
+        MainManager.Instance.DataScoreRaw().ToString();
 
-    void SetScoreText(TextMeshProUGUI scoreText) =>
+    private void SetScoreText(TextMeshProUGUI scoreText) =>
         MainManager.Instance.ScoreText = scoreText;
 
-    void SetBallRigidbody() =>
+    private void SetBallRigidbody() =>
         MainManager.Instance.Ball = Ball;
 
-    void SetGameoverText() =>
+    private void SetGameoverText() =>
         MainManager.Instance.GameOverText = gameoverObject;
 
-    public void GoToMenu() =>
+    private void GoToMenu() =>
         SceneManager.LoadScene(0);
 
 }
