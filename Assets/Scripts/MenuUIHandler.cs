@@ -33,7 +33,7 @@ public class MenuUIHandler : MonoBehaviour
 
     public void Exit()
     {
-        MainManager.Instance.SaveBestScore();
+        // MainManager.Instance.SaveBestScore();
 
 #if UNITY_EDITOR
         EditorApplication.ExitPlaymode();

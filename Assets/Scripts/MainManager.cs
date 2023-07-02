@@ -28,6 +28,8 @@ public class MainManager : MonoBehaviour
     private bool m_Started = false;
     private int m_Points;
     private bool m_GameEnded = false;
+    private bool m_IsWin = false;
+    public bool isWin { get => m_IsWin; }
 
     private Rigidbody _Ball;
     public Rigidbody Ball
@@ -36,9 +38,10 @@ public class MainManager : MonoBehaviour
         set => _Ball = value;
     }
 
-    public TextMeshProUGUI bestScoreMesh { get; set; }
+    public TextMeshProUGUI topScoreMesh { get; set; }
+    public TextMeshProUGUI inGameScoreMesh { get; set; }
     public string currentPlayerName { get; set; }
-    public GameObject GameEndedTextObject { get; set; }
+    public GameObject gameEndedTextObject { get; set; }
 
     private static void SetupInstance()
     {
@@ -109,6 +112,8 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameEnded)
         {
+            if (isWin) LoadBestScoreText(topScoreMesh);
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -120,16 +125,17 @@ public class MainManager : MonoBehaviour
     private void AddPoint(int point)
     {
         m_Points += point;
-        bestScoreMesh.text = $"Score : {m_Points}";
+        inGameScoreMesh.text = $"Score : {m_Points}";
     }
 
     private void Win()
     {
-        TextMeshProUGUI textMesh = GameEndedTextObject.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI textMesh = gameEndedTextObject.GetComponent<TextMeshProUGUI>();
         textMesh.text = "Congratulations! \nPress Space to play again...";
-        GameEndedTextObject.SetActive(true);
-        LoadBestScoreText(bestScoreMesh);
+        gameEndedTextObject.SetActive(true);
+        LoadBestScoreText(topScoreMesh);
         m_GameEnded = true;
+        m_IsWin = true;
         m_Points = 0;
     }
 
@@ -137,8 +143,8 @@ public class MainManager : MonoBehaviour
     {
         m_GameEnded = true;
         m_Points = 0;
-        LoadBestScoreText(bestScoreMesh);
-        GameEndedTextObject.SetActive(true);
+        LoadBestScoreText(topScoreMesh);
+        gameEndedTextObject.SetActive(true);
     }
 
     [System.Serializable]
@@ -165,7 +171,7 @@ public class MainManager : MonoBehaviour
             File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
             Debug.Log(Application.persistentDataPath);
 
-            LoadBestScoreText(bestScoreMesh);
+            LoadBestScoreText(topScoreMesh);
         }
         else if (m_Points <= data.HighiestScore)
         {
@@ -176,21 +182,9 @@ public class MainManager : MonoBehaviour
 
     public void LoadBestScoreText(TextMeshProUGUI mesh)
     {
-        bestScoreMesh = mesh;
+        topScoreMesh = mesh;
         SaveData data = LoadData();
-        bestScoreMesh.text = $"{data.TheBestPlayer} has the Best Score: {data.HighiestScore}";
-    }
-
-    public string LoadDataNameRaw()
-    {
-        SaveData data = LoadData();
-        return data.TheBestPlayer;
-    }
-
-    public int LoadDataScoreRaw()
-    {
-        SaveData data = LoadData();
-        return data.HighiestScore;
+        topScoreMesh.text = $"Best Score: {data.TheBestPlayer} : {data.HighiestScore}";
     }
 
     private SaveData LoadData()

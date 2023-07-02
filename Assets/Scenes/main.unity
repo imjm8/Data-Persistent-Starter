@@ -430,7 +430,7 @@ GameObject:
   - component: {fileID: 325563054}
   - component: {fileID: 325563055}
   m_Layer: 5
-  m_Name: PlayerName
+  m_Name: TopScorer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2003,7 +2003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e1efc1a29213f24a941a24641e1a1e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: {fileID: 325563055}
+  topScorerTitle: {fileID: 325563055}
   scoreTextMesh: {fileID: 819775007}
   gameoverObject: {fileID: 382368015}
   Ball: {fileID: 177912862}

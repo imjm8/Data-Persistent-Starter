@@ -8,15 +8,15 @@ using TMPro;
 
 public class UIMainScene : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI playerName;
+    [SerializeField] private TextMeshProUGUI topScorerTitle;
     [SerializeField] private TextMeshProUGUI scoreTextMesh;
     [SerializeField] private GameObject gameoverObject;
     [SerializeField] private Rigidbody Ball;
 
     void Awake()
     {
-        SetPlayerName();
-        SetScoreTextMesh();
+        SetTopScorer();
+        SetIngameScoreTextMesh();
         SetBallRigidbody();
         SetGameoverText();
         DrawPrefab();
@@ -25,17 +25,17 @@ public class UIMainScene : MonoBehaviour
     private void DrawPrefab() =>
         MainManager.Instance.DrawPrefabConfig();
 
-    private void SetPlayerName() =>
-        playerName.text = MainManager.Instance.currentPlayerName;
+    private void SetTopScorer() =>
+        MainManager.Instance.LoadBestScoreText(topScorerTitle);
 
-    private void SetScoreTextMesh() =>
-        MainManager.Instance.bestScoreMesh = scoreTextMesh;
+    private void SetIngameScoreTextMesh() =>
+        MainManager.Instance.inGameScoreMesh = scoreTextMesh;
 
     private void SetBallRigidbody() =>
         MainManager.Instance.Ball = Ball;
 
     private void SetGameoverText() =>
-        MainManager.Instance.GameEndedTextObject = gameoverObject;
+        MainManager.Instance.gameEndedTextObject = gameoverObject;
 
     public void GoToMenu() =>
         SceneManager.LoadScene(0);
