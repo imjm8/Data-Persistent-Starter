@@ -9,6 +9,5 @@ public class DeathZone : MonoBehaviour
     {
         Destroy(other.gameObject);
         MainManager.Instance.SaveBestScore();
-        MainManager.Instance.GameOver();
     }
 }

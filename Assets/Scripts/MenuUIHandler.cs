@@ -15,28 +15,21 @@ using UnityEditor;
 public class MenuUIHandler : MonoBehaviour
 {
     [SerializeField] TMP_InputField playerNameInput;
+    [SerializeField] TextMeshProUGUI bestScore;
 
     void Start()
     {
-
+        LoadBestScore();
     }
 
-    public void StartGame() => SceneManager.LoadScene(1);
- 
+    public void StartGame() => 
+        SceneManager.LoadScene(1);
 
-    public void SetPlayerName()
-    {
-        if (MainManager.Instance != null)
-        {
-            MainManager.Instance.currentPlayerName = playerNameInput.text;
-        }
-    }
+    private void LoadBestScore() => 
+        MainManager.Instance.LoadBestScoreText(bestScore);
 
-    private void SetPlayerText()
-    {
-        string text = playerNameInput.text;
-        MainManager.Instance.currentPlayerName = text;
-    }
+    public void SetPlayerName() => 
+        MainManager.Instance.currentPlayerName = playerNameInput.text;
 
     public void Exit()
     {

@@ -11,7 +11,7 @@ public class MainManager : MonoBehaviour
     private static MainManager _Instance;
     public static MainManager Instance
     {
-        get 
+        get
         {
             if (_Instance == null)
             {
@@ -27,7 +27,7 @@ public class MainManager : MonoBehaviour
     private int LineCount = 6;
     private bool m_Started = false;
     private int m_Points;
-    private bool m_GameOver = false;
+    private bool m_GameEnded = false;
 
     private Rigidbody _Ball;
     public Rigidbody Ball
@@ -36,9 +36,9 @@ public class MainManager : MonoBehaviour
         set => _Ball = value;
     }
 
-    public TextMeshProUGUI ScoreText { get; set; }
+    public TextMeshProUGUI bestScoreMesh { get; set; }
     public string currentPlayerName { get; set; }
-    public GameObject GameOverText { get; set; }
+    public GameObject GameEndedTextObject { get; set; }
 
     private static void SetupInstance()
     {
@@ -47,7 +47,7 @@ public class MainManager : MonoBehaviour
         {
             GameObject gameObj = new GameObject();
             gameObj.name = "MainManager";
-            
+
             _Instance = gameObj.AddComponent<MainManager>();
             DontDestroyOnLoad(gameObj);
         }
@@ -63,8 +63,6 @@ public class MainManager : MonoBehaviour
 
         _Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        // LoadBestScore();
     }
 
     // Start is called before the first frame update
@@ -90,6 +88,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        m_Started = false;
     }
 
     private void Update()
@@ -107,7 +107,7 @@ public class MainManager : MonoBehaviour
                 _Ball.AddForce(forceDir * _force, ForceMode.VelocityChange);
             }
         }
-        else if (m_GameOver)
+        else if (m_GameEnded)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -120,14 +120,25 @@ public class MainManager : MonoBehaviour
     private void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        bestScoreMesh.text = $"Score : {m_Points}";
     }
 
-    public void GameOver()
+    private void Win()
     {
-        m_GameOver = true;
+        TextMeshProUGUI textMesh = GameEndedTextObject.GetComponent<TextMeshProUGUI>();
+        textMesh.text = "Congratulations! \nPress Space to play again...";
+        GameEndedTextObject.SetActive(true);
+        LoadBestScoreText(bestScoreMesh);
+        m_GameEnded = true;
         m_Points = 0;
-        GameOverText.SetActive(true);
+    }
+
+    private void GameOver()
+    {
+        m_GameEnded = true;
+        m_Points = 0;
+        LoadBestScoreText(bestScoreMesh);
+        GameEndedTextObject.SetActive(true);
     }
 
     [System.Serializable]
@@ -143,27 +154,40 @@ public class MainManager : MonoBehaviour
 
         if (m_Points > data.HighiestScore)
         {
+
             data.HighiestScore = m_Points;
             data.TheBestPlayer = currentPlayerName;
+
+            Win();
 
             string json = JsonUtility.ToJson(data);
 
             File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
             Debug.Log(Application.persistentDataPath);
+
+            LoadBestScoreText(bestScoreMesh);
         }
         else if (m_Points <= data.HighiestScore)
         {
+            GameOver();
             return;
         }
     }
 
-    public string DataNameRaw()
+    public void LoadBestScoreText(TextMeshProUGUI mesh)
+    {
+        bestScoreMesh = mesh;
+        SaveData data = LoadData();
+        bestScoreMesh.text = $"{data.TheBestPlayer} has the Best Score: {data.HighiestScore}";
+    }
+
+    public string LoadDataNameRaw()
     {
         SaveData data = LoadData();
         return data.TheBestPlayer;
     }
 
-    public int DataScoreRaw()
+    public int LoadDataScoreRaw()
     {
         SaveData data = LoadData();
         return data.HighiestScore;
@@ -177,8 +201,6 @@ public class MainManager : MonoBehaviour
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            ScoreText.text = $"{data.TheBestPlayer} has the Best Score: {data.HighiestScore}";
 
             return data;
         }
