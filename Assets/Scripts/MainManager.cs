@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 
-public class MainManager : SingletonMain<MainManager>
+public class MainManager : Singleton<MainManager>
 {
     [SerializeField] private Brick _BrickPrefab;
     [SerializeField] private float _force = 2.0f;
@@ -145,6 +145,7 @@ public class MainManager : SingletonMain<MainManager>
     private SaveData LoadData()
     {
         string path = Application.persistentDataPath + "/savefile.json";
+        Debug.Log(path);
 
         if (File.Exists(path))
         {

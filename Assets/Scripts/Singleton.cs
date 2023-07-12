@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class SingletonMain<T> : MonoBehaviour where T : Component
+public class Singleton<T> : MonoBehaviour where T : Component
 {
     private static T _instance;
     public static T Instance
@@ -15,16 +14,29 @@ public class SingletonMain<T> : MonoBehaviour where T : Component
 
                 if (_instance == null) SetupInstance();
             }
+            else 
+            {
+                string typeName = typeof(T).Name;
+            }
 
             return _instance;
         }
     }
 
     private void Awake()
-    {
-        if (_instance == null) SetupInstance();
-        else  Destroy(gameObject);
-    }
+        {
+            // if this is the first instance, make this the persistent singleton
+            if (_instance == null)
+            {
+                _instance = (T)FindObjectOfType(typeof(T));
+                DontDestroyOnLoad(this.gameObject);
+            }
+            // otherwise, remove any duplicates
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
 
     private static void SetupInstance()
     {
