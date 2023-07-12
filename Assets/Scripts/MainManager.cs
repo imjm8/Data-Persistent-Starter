@@ -6,22 +6,8 @@ using UnityEngine.UI;
 using System.IO;
 using TMPro;
 
-public class MainManager : MonoBehaviour
+public class MainManager : SingletonMain<MainManager>
 {
-    private static MainManager _Instance;
-    public static MainManager Instance
-    {
-        get
-        {
-            if (_Instance == null)
-            {
-                SetupInstance();
-            }
-
-            return _Instance;
-        }
-    }
-
     [SerializeField] private Brick _BrickPrefab;
     [SerializeField] private float _force = 2.0f;
     private int LineCount = 6;
@@ -42,37 +28,6 @@ public class MainManager : MonoBehaviour
     public TextMeshProUGUI inGameScoreMesh { get; set; }
     public string currentPlayerName { get; set; }
     public GameObject gameEndedTextObject { get; set; }
-
-    private static void SetupInstance()
-    {
-        _Instance = FindObjectOfType<MainManager>();
-        if (_Instance == null)
-        {
-            GameObject gameObj = new GameObject();
-            gameObj.name = "MainManager";
-
-            _Instance = gameObj.AddComponent<MainManager>();
-            DontDestroyOnLoad(gameObj);
-        }
-    }
-
-    private void Awake()
-    {
-        if (_Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        _Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        // CurrentPlayerName = PlayerDataHandle.Instance.PlayerName;
-    }
 
     public void DrawPrefabConfig() => _SetPrefabConfig();
     private void _SetPrefabConfig()
